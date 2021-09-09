@@ -3,12 +3,7 @@ import matplotlib.pyplot as plt
 import time
 
 from numpy.core.function_base import linspace
-from numpy.linalg import eigvals
-
-
-import DFT_1d
- 
-
+from numpy.linalg import eigvals 
 
 
 # numeric paramters
@@ -25,7 +20,7 @@ m = 1
 hbar = 1
 
 # DFT hyper parameters
-NumberofElectrons = 3
+NumberofElectrons = 4
 
 
 def get_kinetic_mat(Ngrid, xmin, xmax):
@@ -43,7 +38,7 @@ def get_kinetic_mat(Ngrid, xmin, xmax):
     return np.asarray(Ekin)
 
 
-def get_potential_mat(Ngrid, xmin, xmax):
+def get_external_harmonic_potential(Ngrid, xmin, xmax):
     xvec = np.linspace(xmin, xmax, Ngrid)
     Vx = xvec**2  # simple X^2 potential
     Vx = np.diag(Vx, 0)
@@ -86,7 +81,6 @@ def calc_density(EigenVecs, num_electrons):
     assert num_electrons > 1
         
     for i in range(0, int(num_electrons/2)):
-        print("i = ",i)
         density += np.power(np.abs(EigenVecs[:, i]), 2)
         density += np.power(np.abs(EigenVecs[:, i*2 + 1]), 2)
     if num_electrons%2 == 1:
@@ -150,7 +144,7 @@ def run_scf(Ngrid, xmin, xmax, initial_density, max_iterations, convergence_thre
         prev_density = new_density
         density = new_density
         # calculate the effective potential using the density
-        Vex = get_potential_mat(Ngrid, xmin, xmax)
+        Vex = get_external_harmonic_potential(Ngrid, xmin, xmax)
         x_energy, x_potential = calculate_exchange(density)
         c_energy, c_potential = calculate_coloumb(density)
 
@@ -190,7 +184,7 @@ def run_scf(Ngrid, xmin, xmax, initial_density, max_iterations, convergence_thre
 # print(T)
 # # step ? - calc total Hamiltonian
 # print("Calculating external potential matrix")
-# V = get_potential_mat(Ngrid, xmin, xmax)
+# V = get_external_harmonic_potential(Ngrid, xmin, xmax)
 # H =  T + V
 
 # step 3 - diagonalize Hamiltonian
