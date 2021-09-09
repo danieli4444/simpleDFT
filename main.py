@@ -6,6 +6,11 @@ from numpy.core.function_base import linspace
 from numpy.linalg import eigvals
 
 
+import DFT_1d
+ 
+
+
+
 # numeric paramters
 FLOAT_PRECISION = 1e-05
 Ngrid = 200
@@ -20,7 +25,7 @@ m = 1
 hbar = 1
 
 # DFT hyper parameters
-NumberofElectrons = 2
+NumberofElectrons = 3
 
 
 def get_kinetic_mat(Ngrid, xmin, xmax):
@@ -63,7 +68,7 @@ def check_density(density, num_electrons):
     """
     s = float(np.sum(density))
     assert (abs(s - num_electrons) < FLOAT_PRECISION), \
-        "density should sum to {0}}! prob={1} instead".format(num_electrons, s)
+        "density should sum to {0} ! prob={1} instead".format(num_electrons, s)
 
 
 #ToDo: change occupation type to spin orbitals
@@ -77,9 +82,17 @@ def calc_density(EigenVecs, num_electrons):
     """    
     test_state = EigenVecs[:, 2]
     check_normalized_state(test_state)
-    density = np.power(np.abs(EigenVecs[:, 0]), 2)
-    for i in range(1, num_electrons):
-        density = density + np.power(np.abs(EigenVecs[:, i]), 2)
+    density = 0
+    assert num_electrons > 1
+        
+    for i in range(0, int(num_electrons/2)):
+        print("i = ",i)
+        density += np.power(np.abs(EigenVecs[:, i]), 2)
+        density += np.power(np.abs(EigenVecs[:, i*2 + 1]), 2)
+    if num_electrons%2 == 1:
+        density += np.power(np.abs(EigenVecs[:, int(num_electrons/2) + 1]), 2)
+    #for i in range(0, num_electrons):
+    #    density = density + np.power(np.abs(EigenVecs[:, i]), 2)
     check_density(density, num_electrons)
     return density
 
