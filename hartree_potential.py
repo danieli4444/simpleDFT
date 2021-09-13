@@ -1,5 +1,5 @@
 import numpy as np
-from physical_constants import m_e, eps_0, e, hbar
+from physical_units import m_e, eps_0, e, hbar
 
 def calculate_hartree_pot(density,xvec,grid_dr, eps=1e-12):
     Ha_energy = 0

@@ -1,5 +1,5 @@
 import numpy as np
-from physical_constants import m_e, eps_0, e, hbar
+from physical_units import m_e, eps_0, e, hbar
 
 def get_kinetic_mat(xvec, grid_dr):
     dx = grid_dr

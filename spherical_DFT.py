@@ -2,15 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from ks_solver import KS_Solver
-
 import grid
-
+from physical_units import units,rmin,rmax
 
 # numeric paramters
 FLOAT_PRECISION = 1e-05
 Ngrid = 1000
-rmin = 1e-09
-rmax = 1e-15
+print("using {0} units".format(units))
 
 # molecule params:
 NumberofElectrons = 1

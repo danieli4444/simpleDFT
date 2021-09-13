@@ -1,7 +1,9 @@
 __pycache__/xc_potential.cpython-38.pyc
-__pycache__/physical_constants.cpython-38.pyc
+__pycache__/physical_units.cpython-38.pyc
 __pycache__/ks_solver.cpython-38.pyc
 __pycache__/kinetic_energy.cpython-38.pyc
 __pycache__/hartree_potential.cpython-38.pyc
 __pycache__/grid.cpython-38.pyc
 __pycache__/external_potential.cpython-38.pyc
+__pycache__/physical_constants.cpython-38.pyc
+__pycache__/spherical_DFT.cpython-38.pyc

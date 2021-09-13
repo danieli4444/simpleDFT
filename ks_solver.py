@@ -12,7 +12,7 @@ from kinetic_energy import get_kinetic_mat
 
 FLOAT_PRECISION = 1e-05
 
-from physical_constants import m_e, eps_0, e, hbar
+from physical_units import m_e, eps_0, e, hbar
 
 
 class KS_Solver:
@@ -150,7 +150,7 @@ class KS_Solver:
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr)
 
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext + Ha_potential
+            Veff = Vext 
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = - T + Veff
