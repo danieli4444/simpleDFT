@@ -1,4 +1,5 @@
 import numpy as np
+from physical_constants import m_e, eps_0, e, hbar
 
 #ToDo: check if dX is needed in the energy calc here??
 def calculate_exchange(density, grid_dr):

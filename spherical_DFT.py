@@ -4,16 +4,13 @@ import matplotlib.pyplot as plt
 from ks_solver import KS_Solver
 
 import grid
-# phisical constants
-#omega = 2*np.pi
-#m = 1
-#hbar = 1
+
 
 # numeric paramters
 FLOAT_PRECISION = 1e-05
 Ngrid = 1000
 rmin = 1e-09
-rmax = 1e-15 
+rmax = 1e-15
 
 # molecule params:
 NumberofElectrons = 1

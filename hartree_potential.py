@@ -1,12 +1,5 @@
 import numpy as np
-from scipy import constants as const
-
-# phisical constants
-omega = 2*np.pi
-m_e = const.m_e 
-hbar = const.hbar
-e = const.e
-eps_0 = const.epsilon_0
+from physical_constants import m_e, eps_0, e, hbar
 
 def calculate_hartree_pot(density,xvec,grid_dr, eps=1e-12):
     Ha_energy = 0

@@ -12,12 +12,7 @@ from kinetic_energy import get_kinetic_mat
 
 FLOAT_PRECISION = 1e-05
 
-# phisical constants
-omega = 2*np.pi
-m_e = const.m_e 
-hbar = const.hbar
-e = const.e
-eps_0 = const.epsilon_0
+from physical_constants import m_e, eps_0, e, hbar
 
 
 class KS_Solver:
