@@ -11,12 +11,12 @@ import grid
 
 # numeric paramters
 FLOAT_PRECISION = 1e-05
-Ngrid = 500
-rmin = 2e-10
-rmax = 0.0
+Ngrid = 1000
+rmin = 1e-09
+rmax = 1e-15 
 
 # molecule params:
-NumberofElectrons = 2
+NumberofElectrons = 1
 
 # DFT params
 maxiterations = 3

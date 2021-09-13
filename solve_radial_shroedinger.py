@@ -19,9 +19,9 @@ eps_0 = const.epsilon_0
 
 
 # grid constants:
-R_gridsize = 2000
-Rmin = 0.0
-Rmax = 2e-9
+R_gridsize = 1000
+Rmin = 2e-9
+Rmax = 1e-15
 
 """
 phy_gridsize = 200
@@ -118,14 +118,13 @@ def plot_densities(r, densities, eigenvalues):
 
 
 if __name__ == "__main__":
-    Rvec = np.linspace(2e-9, 0.0, R_gridsize,endpoint=False)
+    Rvec = np.linspace(Rmin, Rmax, R_gridsize,endpoint=False)
     #(phy_vec, d_phy) = np.linspace(phy_min, phy_max, phy_gridsize,retstep=True)
     #(theta_vec, d_theta)= np.linspace(theta_min, theta_max, theta_gridsize,retstep=True)
     #theta_vec, phy_vec = np.meshgrid(theta_vec, phy_vec)
 
     kinetic_term = calc_laplace_term(Rvec)
     potential_term = get_potential_term(Rvec)
-    print(potential_term)
     l_number = 0
     #angular_term = get_angular_term(Rvec, l_number)
     angular_term =0

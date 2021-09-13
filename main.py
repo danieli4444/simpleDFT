@@ -100,7 +100,7 @@ def calculate_exchange(density):
     return x_energy, np.asarray(x_potential)
 
 
-def calculate_coloumb(density, eps=1e-1):
+def calculate_hartree_pot(density, eps=1e-1):
     start_time = time.time()
     c_energy = 0
     c_potential = np.zeros(xvec.shape)
@@ -146,7 +146,7 @@ def run_scf(Ngrid, xmin, xmax, initial_density, max_iterations, convergence_thre
         # calculate the effective potential using the density
         Vex = get_external_harmonic_potential(Ngrid, xmin, xmax)
         x_energy, x_potential = calculate_exchange(density)
-        c_energy, c_potential = calculate_coloumb(density)
+        c_energy, c_potential = calculate_hartree_pot(density)
 
         Veff = Vex + x_potential + c_potential
         
