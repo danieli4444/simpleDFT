@@ -3,14 +3,15 @@ import numpy as np
 
 units = "si"
 
+# config grid dimensions
 if units == "AU":
-    rmin = 1
-    rmax = 1e-05
+    rmin = 20
+    rmax = 1e-10
 else:
     rmin = 1e-09
     rmax = 1e-15
 
-
+# config physical constants
 if units == "AU":
     m_e = 1
     e = 1

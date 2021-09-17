@@ -12,7 +12,7 @@ from kinetic_energy import get_kinetic_mat
 
 FLOAT_PRECISION = 1e-05
 
-from physical_units import m_e, eps_0, e, hbar
+from physical_units import m_e, eps_0, e, hbar, units
 
 
 class KS_Solver:
@@ -150,7 +150,7 @@ class KS_Solver:
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr)
 
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext 
+            Veff = Vext  + Ha_potential
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = - T + Veff
@@ -170,7 +170,11 @@ class KS_Solver:
             #print(new_density)
             print(" diff from prev density is:", np.sum(np.abs(prev_density - new_density)))
             E0 = self.get_ground_state_energy(EigenVals, Ha_energy,0) /e
-            print("ground state energy is {0} ev".format(E0))
+            if units == "AU":
+                energy_units = "AU"
+            else:
+                energy_units = "eV"
+            print("ground state energy is {0} {1}".format(E0, energy_units))
             iteration += 1
         
         print("finished SCF loop")
