@@ -1,7 +1,7 @@
 from scipy import constants as const
 import numpy as np
 
-units = "si"
+units = "AU"
 
 # config grid dimensions
 if units == "AU":
@@ -15,7 +15,7 @@ else:
 if units == "AU":
     m_e = 1
     e = 1
-    eps_0 = 1
+    eps_0 = 1/(4*np.pi)
     hbar = 1
 
 else:

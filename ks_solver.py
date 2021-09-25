@@ -97,11 +97,11 @@ class KS_Solver:
         sorted_EigVals = epsilon_n[sortinds]
         return sorted_EigVals, sorted_EigVecs
 
-    def plot_density(self, r, density, eigenvalues):
+    def plot_density(self, r, density, energy_value):
         plt.xlabel('x ($\\mathrm{\AA}$)')
         plt.ylabel('probability density ($\\mathrm{\AA}^{-1}$)')
         plt.title('Atom density for l=0, n=1') 
-        energy = 'E = {: >5.2f} eV'.format(eigenvalues[0] / e)
+        energy = 'E = {: >5.2f} eV'.format(energy_value / e)
         plt.plot(r * 1e+10, density, color='blue',  label=energy)
         plt.legend()
         plt.show()
@@ -150,7 +150,7 @@ class KS_Solver:
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr)
 
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext  + Ha_potential
+            Veff = Vext  
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = - T + Veff
@@ -169,7 +169,7 @@ class KS_Solver:
             print("@@@@@@calculated new density@@@@@\n")
             #print(new_density)
             print(" diff from prev density is:", np.sum(np.abs(prev_density - new_density)))
-            E0 = self.get_ground_state_energy(EigenVals, Ha_energy,0) /e
+            E0 = self.get_ground_state_energy(EigenVals, 0,0) /e
             if units == "AU":
                 energy_units = "AU"
             else:
@@ -178,4 +178,4 @@ class KS_Solver:
             iteration += 1
         
         print("finished SCF loop")
-        self.plot_density(self.grid.gridvec, new_density, EigenVals)
+        self.plot_density(self.grid.gridvec, new_density, E0)

@@ -5,7 +5,7 @@ def calculate_hartree_pot(density,xvec,grid_dr, eps=1e-12):
     Ha_energy = 0
     Ha_potential = np.zeros(xvec.shape)
     Ha_energy_constant = - 0.5 *e**2
-    Ha_potential_constant = - 1 * e
+    Ha_potential_constant = - e**2/(4*np.pi * eps_0)
     for t1 in range(density.size):
         x1 = xvec[t1]
         d1 = density[t1]

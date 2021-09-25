@@ -17,11 +17,16 @@ hbar = const.hbar
 e = const.e
 eps_0 = const.epsilon_0
 
+omega = 2*np.pi
+m_e = 1 
+hbar = 1
+e = 1
+eps_0 = 1/ (4* np.pi)
 
 # grid constants:
 R_gridsize = 1000
-Rmin = 2e-9
-Rmax = 1e-15
+Rmin = 20
+Rmax = 1e-05
 
 """
 phy_gridsize = 200
@@ -108,9 +113,9 @@ def plot_densities(r, densities, eigenvalues):
     plt.ylabel('probability density ($\\mathrm{\AA}^{-1}$)')
     plt.title('Hydrogen densities for l=0, n=1,2,3') 
     energies = ['E = {: >5.2f} eV'.format(eigenvalues[i] / e) for i in range(3)]
-    plt.plot(r * 1e+10, densities[0], color='blue',  label=energies[0])
-    plt.plot(r * 1e+10, densities[1], color='green', label=energies[1])
-    plt.plot(r * 1e+10, densities[2], color='red',   label=energies[2])
+    plt.plot(r , densities[0], color='blue',  label=energies[0])
+    plt.plot(r , densities[1], color='green', label=energies[1])
+    plt.plot(r , densities[2], color='red',   label=energies[2])
      
     plt.legend()
     plt.show()
