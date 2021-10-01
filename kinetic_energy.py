@@ -11,5 +11,5 @@ def get_kinetic_mat(xvec, grid_dr):
     #d2grid[0, :] = 0
     #d2grid[Ngrid-1, :] = 0
     d2grid[-1,-1] = d2grid[0,0]
-    Ekin = hbar**2/(2*m_e)*d2grid
+    Ekin = - hbar**2/(2*m_e)*d2grid
     return np.asarray(Ekin)

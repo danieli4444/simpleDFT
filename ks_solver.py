@@ -153,7 +153,7 @@ class KS_Solver:
             Veff = Vext  + Ha_potential + x_potential
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
-            H = - T + Veff
+            H = T + Veff
             
             # solve Kohn-Sham equations - find eigenvalues and eigenvectors for the hamiltonian
             EigenVals, EigenVecs = self._diagonalize_hamiltonian(H)
