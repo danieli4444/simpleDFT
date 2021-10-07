@@ -150,7 +150,7 @@ class KS_Solver:
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr)
 
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext  + Ha_potential + x_potential
+            Veff = Vext   + x_potential + Ha_potential
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = T + Veff

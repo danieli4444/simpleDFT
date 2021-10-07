@@ -7,7 +7,7 @@ from physical_units import units,rmin,rmax
 
 # numeric paramters
 FLOAT_PRECISION = 1e-05
-Ngrid = 1000
+Ngrid = 2000
 
 # remember set units choice in the physical_units.py file
 print("using {0} units".format(units))
@@ -16,7 +16,7 @@ print("using {0} units".format(units))
 NumberofElectrons = 2
 
 # DFT params
-maxiterations = 3
+maxiterations = 5
 grid_1d = grid.Radial_Grid(Ngrid, rmin, rmax) 
 initial_density = NumberofElectrons* np.ones(Ngrid)/(Ngrid)
 
