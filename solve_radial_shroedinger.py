@@ -23,6 +23,10 @@ hbar = 1
 e = 1
 eps_0 = 1/ (4* np.pi)
 
+
+a0 = (4*np.pi * eps_0 * hbar**2)/(m_e * e**2)
+print("a0 = {0}".format(a0))
+
 # grid constants:
 R_gridsize = 1000
 Rmin = 20
@@ -116,14 +120,17 @@ def plot_densities(r, densities, eigenvalues):
     plt.plot(r , densities[0], color='blue',  label=energies[0])
     plt.plot(r , densities[1], color='green', label=energies[1])
     plt.plot(r , densities[2], color='red',   label=energies[2])
-     
     plt.legend()
     plt.show()
     return
 
 
+def get_true_ground_state(Rvec):
+    psi_1s = 1/(np.sqrt(np.pi)) * np.power(1/a0,1.5) * np.exp(-Rvec/a0) 
+    return psi_1s
+
 if __name__ == "__main__":
-    Rvec = np.linspace(Rmin, Rmax, R_gridsize,endpoint=False)
+    (Rvec, grid_dr) = np.linspace(Rmin, Rmax, R_gridsize,endpoint=False,retstep=True)
     #(phy_vec, d_phy) = np.linspace(phy_min, phy_max, phy_gridsize,retstep=True)
     #(theta_vec, d_theta)= np.linspace(theta_min, theta_max, theta_gridsize,retstep=True)
     #theta_vec, phy_vec = np.meshgrid(theta_vec, phy_vec)
@@ -139,8 +146,14 @@ if __name__ == "__main__":
     (Eigen_Vals,Eigen_Vecs) = diagonalize_hamiltonian(H)
 
     """ compute probability density for each eigenvector """
-    densities = [np.absolute(Eigen_Vecs[:, i])**2 for i in range(len(Eigen_Vals))]
+    R_functions = Eigen_Vecs
+    densities = [np.absolute(R_functions[:, i])**2 for i in range(len(Eigen_Vecs))]
+    analytic_ground_state = get_true_ground_state(Rvec) *Rvec
+    true_density = 4*np.pi *(np.absolute(analytic_ground_state))**2 *np.abs(grid_dr)
+    densities[2] = true_density
 
+    x = np.sum(true_density)
+    print("density sums to ",np.sum(x))
     plot_densities(Rvec, densities, Eigen_Vals)
     #plt.plot(Rvec*1e10,Eigen_Vecs[0]**2)
     #plt.show()
