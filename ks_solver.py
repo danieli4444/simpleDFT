@@ -58,7 +58,9 @@ class KS_Solver:
             density ([1d matrix(vector)]): [description]
             num_electrons ([integer]): [description]
         """
-        s = float(np.sum(density))
+        #integrate the density over the spherical space
+        #s = float(np.sum(density))
+        s = 4*np.pi * float(np.sum(density * self.grid.gridvec**2 ))
         assert (abs(s - num_electrons) < FLOAT_PRECISION), \
             "density should sum to {0} ! prob={1} instead".format(num_electrons, s)
 
@@ -78,9 +80,8 @@ class KS_Solver:
 
         for i in range (0, len(self.occupation_list)):
             #print("orbital number - {0} adding occupation: {1}".format(i, self.occupation_list[i]))
-            density += self.occupation_list[i] * np.power(np.abs(EigenVecs[:, i]), 2)
-
-
+            #density += self.occupation_list[i] * np.power(np.abs(EigenVecs[:, i]), 2)
+            density += 1/(4*np.pi)* self.occupation_list[i] * np.power(np.abs(EigenVecs[:, i]), 2) /self.grid.gridvec**2
         self._check_density(density, num_electrons)
         return density
 
@@ -148,9 +149,9 @@ class KS_Solver:
 
             x_energy, x_potential = calculate_exchange(density, self.grid.grid_dr)
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr)
-
+            print("Ha_energy = {0} , x_energy = {1}".format(Ha_energy,x_energy))
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext   + x_potential + Ha_potential
+            Veff = Vext + Ha_potential + 0
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = T + Veff
@@ -159,17 +160,17 @@ class KS_Solver:
             EigenVals, EigenVecs = self._diagonalize_hamiltonian(H)
             
             # ks orbitals visualization
-            for i in range(3):
-                plt.plot(self.grid.gridvec,EigenVecs[:,i],label=EigenVals[i]/e)
-                plt.legend(loc=1)
-            plt.show()
+            # for i in range(3):
+            #     plt.plot(self.grid.gridvec,EigenVecs[:,i],label=EigenVals[i]/e)
+            #     plt.legend(loc=1)
+            # plt.show()
             # calculate new density
             new_density = self._calc_density(EigenVecs, self.numelectrons)
             #print(prev_density)
             print("@@@@@@calculated new density@@@@@\n")
             #print(new_density)
             print(" diff from prev density is:", np.sum(np.abs(prev_density - new_density)))
-            E0 = self.get_ground_state_energy(EigenVals, Ha_energy, x_energy) /e
+            E0 = self.get_ground_state_energy(EigenVals, Ha_energy, 0) /e
             if units == "AU":
                 energy_units = "AU"
             else:
@@ -178,4 +179,4 @@ class KS_Solver:
             iteration += 1
         
         print("finished SCF loop")
-        self.plot_density(self.grid.gridvec, new_density, E0)
+        #self.plot_density(self.grid.gridvec, new_density, E0)

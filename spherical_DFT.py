@@ -16,7 +16,7 @@ print("using {0} units".format(units))
 NumberofElectrons = 2
 
 # DFT params
-maxiterations = 5
+maxiterations = 30
 grid_1d = grid.Radial_Grid(Ngrid, rmin, rmax) 
 initial_density = NumberofElectrons* np.ones(Ngrid)/(Ngrid)
 

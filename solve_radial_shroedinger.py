@@ -148,8 +148,8 @@ if __name__ == "__main__":
     """ compute probability density for each eigenvector """
     R_functions = Eigen_Vecs
     densities = [np.absolute(R_functions[:, i])**2 for i in range(len(Eigen_Vecs))]
-    analytic_ground_state = get_true_ground_state(Rvec) *Rvec
-    true_density = 4*np.pi *(np.absolute(analytic_ground_state))**2 *np.abs(grid_dr)
+    analytic_ground_state = get_true_ground_state(Rvec)
+    true_density = 4*np.pi *(np.absolute(analytic_ground_state*Rvec))**2 *np.abs(grid_dr)
     densities[2] = true_density
 
     x = np.sum(true_density)
