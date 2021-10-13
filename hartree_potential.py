@@ -2,7 +2,6 @@ import numpy as np
 from scipy.integrate.odepack import odeint
 from physical_units import m_e, eps_0, e, hbar
 from scipy import integrate
-from numerov import runNumerov
 import matplotlib.pyplot as plt
 
 from scipy import *
@@ -41,6 +40,33 @@ def check_poisson(xvec,grid_dr):
     return computed_density
 
 
+def solve_poisson_ode(xvec,density):
+    """ The poisson Eq is: 1/r * d2/dr2 (r *V) = -4 pi * density(r)
+        which can be transformed to -
+        d2/dr2 (U) = -4pi*density(r) * r ; where V = U/r
+
+        The boundry conditions are: U(0) = 0, U(r>>R)=Num_electrons (pointwise charge potential)
+
+        in order to solve, we transform into 2 first order equations:
+        (1) U'(r) = y(r)
+        (2) y'(r) = -4pi * density * r
+    
+    """
+        
+    def ode_sys(t, Y,dens):
+
+        y = Y[0]
+        dx_dt=Y[1]
+        d2x_dt2= -4*np.pi *t*  dens(t)
+        return [dx_dt, d2x_dt2]
+
+    dens = interpolate.interp1d(x=xvec, y=density)
+
+    sol = solve_ivp(ode_sys, t_span=[xvec[0], xvec[-1]] , y0=[0,1], t_eval=xvec, args=(dens, ),dense_output=True)
+
+    U = sol.y[0]
+    return U
+
 def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
     """ U_final = U_poisson +  U_pointwise_potential - (xvec/R) * U_poisson
         where -  Vhartree = U_final / r
@@ -68,15 +94,15 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
     Ha_potential_constant = 4*np.pi/eps_0 *e**2
     # estimation at which r >> R the potential is similar to pointwise charge
     grid_center = int(len(xvec)/2)
-    R = xvec[grid_center]
+    R = xvec[-3]
     # at r>>R for some large R, the hartree potential is similar to a pointwise charge 
     U_pointwise_potential = xvec*numelectrons/R 
 
-    # U_poisson'' = - 4pi * r * density
-    g = -4*np.pi * xvec * density
+    # U_poisson'' = - 4pi * r * density(r)
     U_0 = 0.0001
     U_diff_0 = 1.000001
-    U_poisson = runNumerov(g,U_0,U_diff_0,grid_dr)[::-1]
+    U_poisson = solve_poisson_ode(xvec,density)
+    
     print(U_poisson[-100])
     print(U_pointwise_potential[-100])
     # normalization??
@@ -87,66 +113,31 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
 
     print("U_poisson = {0} , U_pointwise = {1}".format(U_poisson.max(), U_pointwise_potential.max()))
     Vhartree = U_final/xvec
-    plt.plot(xvec, Vhartree, color='blue')
-    plt.plot(xvec,density,color='red')
-    plt.plot(xvec,U_pointwise_potential/xvec,color='black')
-    plt.show()
-    for t in range(density.size):
+
+    # get rid of the numeric artifacts
+    for i in range(0,5):
+        Vhartree[i] = 0
+        Vhartree[i] = 0
+
+    # plt.plot(xvec, Vhartree, color='blue')
+    # plt.plot(xvec,density,color='red')
+    # plt.plot(xvec,U_pointwise_potential,color='black')
+    # plt.show()
+    for t in range(len(Vhartree)):
         r = xvec[t]
         d = density[t] 
         Ehartree = 0
         Ehartree += Vhartree[t] * d * r**2 * grid_dr
     
-    Ehartree *= Ha_energy_constant * 4*np.pi
+    Ehartree *= Ha_energy_constant 
     
     #Ehartree = Ha_energy_constant * 4*np.pi (Vhartree*density*xvec**2,xvec)
     print("solved Vhartree using poisson!")
     print("Ehartree = {0} ".format(Ehartree))
 
     return float(Ehartree) , np.asarray(np.mat(np.diag(Vhartree, 0)))
-    # for t1 in range(density.size):
-    #     r1 = xvec[t1]
-    #     d1 = density[t1]
-    #     for t2 in range(density.size):
-    #         r2 = xvec[t2]
-    #         d2 = density[t2]
-    #         if r1 < r2:
-    #             Ha_potential[t1] += (1/r1) * grid_dr * r2**2 * d2 
-    #         else:
-    #             Ha_potential[t1] += (1/r1) * grid_dr * r2 * d2 
-        
-    #     Ha_energy += Ha_energy_constant *Ha_potential_constant *Ha_potential[t1]*d1*r1**2*grid_dr
 
-    # Ha_potential = Ha_potential_constant * np.mat(np.diag(Ha_potential, 0))
     return float(Ha_energy), np.asarray(Ha_potential)
-
-def solve_poisson_ode(xvec,density):
-    """ The poisson Eq is: 1/r * d2/dr2 (r *V) = -4 pi * density(r)
-        which can be transformed to -
-        d2/dr2 (U) = -4pi*density(r) * r ; where V = U/r
-
-        The boundry conditions are: U(0) = 0, U(r>>R)=Num_electrons (pointwise charge potential)
-
-        in order to solve, we transform into 2 first order equations:
-        (1) U'(r) = y(r)
-        (2) y'(r) = -4pi * density * r
-    
-    """
-        
-    def ode_sys(t, Y,dens):
-
-        y = Y[0]
-        dx_dt=Y[1]
-        d2x_dt2= -4*np.pi *t*  dens(t)
-        return [dx_dt, d2x_dt2]
-
-    dens = interpolate.interp1d(x=xvec, y=density)
-
-    sol = solve_ivp(ode_sys, t_span=[0, 10] , y0=[0,1], t_eval=xvec, args=(dens, ),dense_output=True)
-
-    return sol.y[0]
-    
-
 
 
 

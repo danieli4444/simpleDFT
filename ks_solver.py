@@ -173,7 +173,7 @@ class KS_Solver:
             print("@@@@@@calculated new density@@@@@\n")
             #print(new_density)
             print(" diff from prev density is:", np.sum(np.abs(prev_density - new_density)))
-            E0 = self.get_ground_state_energy(EigenVals, Ha_energy, 0) /e
+            E0 = self.get_ground_state_energy(EigenVals, 0, 0) /e
             if units == "AU":
                 energy_units = "AU"
             else:
