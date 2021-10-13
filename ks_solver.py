@@ -108,7 +108,7 @@ class KS_Solver:
         plt.show()
         return
 
-    def get_ground_state_energy(self, EigenVals, E_Ha, x_energy):
+    def get_ground_state_energy(self, EigenVals, Ehartree, x_energy):
         E0 = 0
         E_ks = 0
         E_integrated_xc = 0
@@ -117,7 +117,11 @@ class KS_Solver:
         for i in range (0, len(self.occupation_list)):
             E_ks += EigenVals[i] * self.occupation_list[i]
         
-        E0 = E_ks - E_Ha - E_integrated_xc + E_xc
+        print("E_ks = {0}, Ha_energy = {1} , x_energy = {2}, E_integrated_xc = {3}"\
+            .format(E_ks,Ehartree,x_energy,E_integrated_xc))
+
+
+        E0 = E_ks - Ehartree - E_integrated_xc + E_xc
         return E0
 
 
@@ -147,9 +151,8 @@ class KS_Solver:
             if self.grid_type == "radial_grid":
                 Vext = get_radial_potential_term(self.grid.gridvec,self.numelectrons)
 
-            x_energy, x_potential = calculate_exchange(density, self.grid.grid_dr)
-            Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr)
-            print("Ha_energy = {0} , x_energy = {1}".format(Ha_energy,x_energy))
+            x_energy, x_potential = calculate_exchange(density, self.grid.gridvec, self.grid.grid_dr)
+            Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr,self.numelectrons)
             #Veff = Vext + x_potential + Ha_potential
             Veff = Vext + Ha_potential + 0
             # construct the Hamiltonian

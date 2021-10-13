@@ -13,7 +13,7 @@ Ngrid = 2000
 print("using {0} units".format(units))
 
 # molecule params:
-NumberofElectrons = 2
+NumberofElectrons = 1
 
 # DFT params
 maxiterations = 30
