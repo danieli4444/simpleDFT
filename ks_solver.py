@@ -81,7 +81,7 @@ class KS_Solver:
         for i in range (0, len(self.occupation_list)):
             #print("orbital number - {0} adding occupation: {1}".format(i, self.occupation_list[i]))
             #density += self.occupation_list[i] * np.power(np.abs(EigenVecs[:, i]), 2)
-            density += 1/(4*np.pi)* self.occupation_list[i] * np.power(np.abs(EigenVecs[:, i]), 2) /self.grid.gridvec**2
+            density += 1/(4*np.pi)* self.occupation_list[i] * np.abs(EigenVecs[:, i])**2 /self.grid.gridvec**2
         self._check_density(density, num_electrons)
         return density
 
@@ -154,7 +154,7 @@ class KS_Solver:
             x_energy, x_potential = calculate_exchange(density, self.grid.gridvec, self.grid.grid_dr)
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr,self.numelectrons)
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext + Ha_potential + 0
+            Veff = Vext + Ha_potential + x_potential
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = T + Veff
@@ -173,7 +173,7 @@ class KS_Solver:
             print("@@@@@@calculated new density@@@@@\n")
             #print(new_density)
             print(" diff from prev density is:", np.sum(np.abs(prev_density - new_density)))
-            E0 = self.get_ground_state_energy(EigenVals, 0, 0) /e
+            E0 = self.get_ground_state_energy(EigenVals, Ha_energy, x_energy) /e
             if units == "AU":
                 energy_units = "AU"
             else:

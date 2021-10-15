@@ -5,10 +5,13 @@ from scipy import integrate
 #ToDo: check if dX is needed in the energy calc here??
 def calculate_exchange(density,xvec,grid_dr):
     x_energy_const = -(3/4)*np.power((3/np.pi),1/3)
-    x_potential_const = np.power((3/np.pi),1/3)
-    
+    x_potential_const = -np.power((3/np.pi),1/3)
+    x_energy = 0
+    for t in range(len(xvec)):
+        x_energy += np.power(density[t],4/3) *xvec[t]**2
+    x_energy *= x_energy_const * 4*np.pi
     #x_energy = x_energy_const * np.sum(np.power(density,4/3)) * grid_dr
-    x_energy = 4 * np.pi *integrate.simps(np.power(density,4/3)* density * xvec**2)
+    #x_energy = 4 * np.pi *integrate.simps(np.power(density,4/3)* density * xvec**2)
 
     x_potential = x_potential_const * np.power(density,1/3)
     

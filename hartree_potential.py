@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 from scipy.integrate.odepack import odeint
 from physical_units import m_e, eps_0, e, hbar
 from scipy import integrate
@@ -6,7 +7,6 @@ import matplotlib.pyplot as plt
 
 from scipy import *
 from scipy import integrate,interpolate
-from scipy.integrate import solve_ivp,odeint
 
 import math
 from kinetic_energy import get_kinetic_mat
@@ -62,7 +62,7 @@ def solve_poisson_ode(xvec,density):
 
     dens = interpolate.interp1d(x=xvec, y=density)
 
-    sol = solve_ivp(ode_sys, t_span=[xvec[0], xvec[-1]] , y0=[0,1], t_eval=xvec, args=(dens, ),dense_output=True)
+    sol = integrate.solve_ivp(ode_sys, t_span=[xvec[0], xvec[-1]] , y0=[0,1], t_eval=xvec, args=(dens, ),dense_output=True)
 
     U = sol.y[0]
     return U
@@ -103,8 +103,8 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
     U_diff_0 = 1.000001
     U_poisson = solve_poisson_ode(xvec,density)
     
-    print(U_poisson[-100])
-    print(U_pointwise_potential[-100])
+    #print(U_poisson[-100]/xvec[-100])
+    #print(U_pointwise_potential[-100]/xvec[-100])
     # normalization??
     #norm = integrate.simps(U_poisson**2,x=xvec)
     #U_poisson *= 1/np.sqrt(abs(norm))
@@ -130,14 +130,14 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
         Ehartree += Vhartree[t] * d * r**2 * grid_dr
     
     Ehartree *= Ha_energy_constant 
-    
+    Ehartree2 = integrate.simps(Vhartree* density * xvec**2 ,xvec)
     #Ehartree = Ha_energy_constant * 4*np.pi (Vhartree*density*xvec**2,xvec)
     print("solved Vhartree using poisson!")
     print("Ehartree = {0} ".format(Ehartree))
+    print("Ehartree with scipy.simps integration = {0}".format(Ehartree2))
 
     return float(Ehartree) , np.asarray(np.mat(np.diag(Vhartree, 0)))
 
-    return float(Ha_energy), np.asarray(Ha_potential)
 
 
 
@@ -146,20 +146,35 @@ if __name__ == "__main__":
     gaussian function which integral is known analyticly
     """
 
-    Ngrid = 1000
+    Ngrid = 2000
     rmin = 0.0
-    rmax = 10.0
+    rmax = 20.0
     (xvec, grid_dr) = np.linspace(rmin, rmax, Ngrid,retstep=True)
+    numelectrons=1
+    R=10
     #true_computed_density = check_poisson(xvec,grid_dr)
     
-    g = gaussian_density(xvec)
-    x = -4*np.pi *xvec*g
-    plt.plot(xvec,x,color='blue',label="ground truth-4pi*x *p(x)")
+    # g = gaussian_density(xvec)
+    # x = -4*np.pi *xvec*g
+    # plt.plot(xvec,x,color='blue',label="ground truth-4pi*x *p(x)")
 
-    sol = solve_poisson_ode(xvec,g)
-    computed_density = check_potential(sol,xvec,grid_dr)
-    plt.plot(xvec[3:-5],computed_density[3:-5],color='red',label="solved d2U/d2r")
+    # U_potential = solve_poisson_ode(xvec,g)
+    # computed_density = check_potential(U_potential,xvec,grid_dr)
+    # plt.plot(xvec[3:-5],computed_density[3:-5],color='red',label="solved d2U/d2r")
     
-    plt.legend()
-    plt.show()
+    # plt.legend()
+    # plt.show()
+
+    density_1s = np.exp(-2*xvec)/np.pi
+    U_potential_1s = solve_poisson_ode(xvec,density_1s)
+    U_pointwise_potential = xvec*numelectrons/rmax
+    U_final = U_potential_1s +  U_pointwise_potential - (xvec/rmax) * U_potential_1s
+    V_potential_1s = U_final[5:-5]/xvec[5:-5]
+
+    xvec=xvec[5:-5]
+    density_1s = density_1s[5:-5]
+    
+    E_1s = 4*np.pi * integrate.simps(xvec**2 * density_1s * V_potential_1s,xvec)
+    print(E_1s)
+    
 
