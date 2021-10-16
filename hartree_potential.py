@@ -93,7 +93,6 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
     Ha_energy_constant = 0.5 
     Ha_potential_constant = 4*np.pi/eps_0 *e**2
     # estimation at which r >> R the potential is similar to pointwise charge
-    grid_center = int(len(xvec)/2)
     R = xvec[-3]
     # at r>>R for some large R, the hartree potential is similar to a pointwise charge 
     U_pointwise_potential = xvec*numelectrons/R 
@@ -117,7 +116,7 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
     # get rid of the numeric artifacts
     for i in range(0,5):
         Vhartree[i] = 0
-        Vhartree[i] = 0
+        Vhartree[-i] = 0
 
     # plt.plot(xvec, Vhartree, color='blue')
     # plt.plot(xvec,density,color='red')
@@ -136,7 +135,7 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
     print("Ehartree = {0} ".format(Ehartree))
     print("Ehartree with scipy.simps integration = {0}".format(Ehartree2))
 
-    return float(Ehartree) , np.asarray(np.mat(np.diag(Vhartree, 0)))
+    return float(Ehartree2) , np.asarray(np.mat(np.diag(Vhartree, 0)))
 
 
 

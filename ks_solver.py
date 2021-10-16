@@ -153,8 +153,13 @@ class KS_Solver:
 
             x_energy, x_potential = calculate_exchange(density, self.grid.gridvec, self.grid.grid_dr)
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr,self.numelectrons)
+            plt.figure(1)
+            plt.plot(self.grid.gridvec,density,color='red')
+            plt.figure(2)
+            plt.plot(self.grid.gridvec,np.diag(Ha_potential),color='blue')
+            plt.show()
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext + Ha_potential + x_potential
+            Veff = Vext + Ha_potential + 0
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = T + Veff
@@ -163,10 +168,10 @@ class KS_Solver:
             EigenVals, EigenVecs = self._diagonalize_hamiltonian(H)
             
             # ks orbitals visualization
-            # for i in range(3):
-            #     plt.plot(self.grid.gridvec,EigenVecs[:,i],label=EigenVals[i]/e)
-            #     plt.legend(loc=1)
-            # plt.show()
+            for i in range(3):
+                plt.plot(self.grid.gridvec,EigenVecs[:,i],label=EigenVals[i]/e)
+                plt.legend(loc=1)
+            plt.show()
             # calculate new density
             new_density = self._calc_density(EigenVecs, self.numelectrons)
             #print(prev_density)
