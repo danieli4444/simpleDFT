@@ -144,7 +144,7 @@ if __name__ == "__main__":
     """
 
     Ngrid = 2000
-    rmin = 0.0
+    rmin = 0.00001
     rmax = 20.0
     (xvec, grid_dr) = np.linspace(rmin, rmax, Ngrid,retstep=True)
     numelectrons=1
@@ -166,10 +166,9 @@ if __name__ == "__main__":
     U_potential_1s = solve_poisson_ode(xvec,density_1s)
     U_pointwise_potential = xvec*numelectrons/rmax
     U_final = U_potential_1s +  U_pointwise_potential - (xvec/rmax) * U_potential_1s
-    V_potential_1s = U_final[5:-5]/xvec[5:-5]
-
-    xvec=xvec[5:-5]
-    density_1s = density_1s[5:-5]
+    V_potential_1s = U_final/xvec
+    xvec=xvec
+    density_1s = density_1s
     
     E_1s = 4*np.pi * integrate.simps(xvec**2 * density_1s * V_potential_1s,xvec)
     print(E_1s)
