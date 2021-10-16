@@ -16,16 +16,3 @@ def get_radial_potential_term(rvec,numelectrons):
     Vr = np.diag(Vr, 0)
     return np.asarray(Vr)
 
-def get_external_harmonic_potential(xvec):
-    """simple x^2 for testing
-
-    Args:
-        xvec ([type]): [description]
-
-    Returns:
-        [type]: [description]
-    """
-    Vx = xvec**2  # simple X^2 potential
-    Vx = np.diag(Vx, 0)
-    return np.asarray(Vx)
-

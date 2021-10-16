@@ -98,8 +98,6 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
     U_pointwise_potential = xvec*numelectrons/R 
 
     # U_poisson'' = - 4pi * r * density(r)
-    U_0 = 0.0001
-    U_diff_0 = 1.000001
     U_poisson = solve_poisson_ode(xvec,density)
     
     #print(U_poisson[-100]/xvec[-100])

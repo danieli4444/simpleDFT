@@ -6,7 +6,7 @@ from scipy import constants as const
 
 
 from hartree_potential import calculate_hartree_pot
-from external_potential import get_external_harmonic_potential, get_radial_potential_term
+from external_potential import get_radial_potential_term
 from xc_potential import calculate_exchange
 from kinetic_energy import get_kinetic_mat
 
@@ -146,10 +146,7 @@ class KS_Solver:
             density = new_density
 
             # calculate the effective potential using the density
-            if self.grid_type == "cartesian_1d":
-                Vext = get_external_harmonic_potential(self.grid.gridvec)
-            if self.grid_type == "radial_grid":
-                Vext = get_radial_potential_term(self.grid.gridvec,self.numelectrons)
+            Vext = get_radial_potential_term(self.grid.gridvec,self.numelectrons)
 
             x_energy, x_potential = calculate_exchange(density, self.grid.gridvec, self.grid.grid_dr)
             Ha_energy, Ha_potential = calculate_hartree_pot(density, self.grid.gridvec,self.grid.grid_dr,self.numelectrons)
