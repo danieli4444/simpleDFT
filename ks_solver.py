@@ -156,7 +156,7 @@ class KS_Solver:
             plt.plot(self.grid.gridvec,np.diag(Ha_potential),color='blue')
             plt.show()
             #Veff = Vext + x_potential + Ha_potential
-            Veff = Vext + 0 + 0
+            Veff = Vext + Ha_potential + 0
             # construct the Hamiltonian
             T = get_kinetic_mat(self.grid.gridvec, self.grid.grid_dr)
             H = T + Veff

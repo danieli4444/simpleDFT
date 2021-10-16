@@ -89,17 +89,20 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
         [type]: [description]
     """
 
-    Ha_potential = np.zeros(xvec.shape)
     Ha_energy_constant = 0.5 
-    Ha_potential_constant = 4*np.pi/eps_0 *e**2
     # estimation at which r >> R the potential is similar to pointwise charge
     R = xvec[-3]
     # at r>>R for some large R, the hartree potential is similar to a pointwise charge 
     U_pointwise_potential = xvec*numelectrons/R 
 
+    # DONT FORGET TO REMOVE THIS
+    # xvec = xvec[::-1]
+    # density_1s = np.exp(-2*xvec)/np.pi
+
     # U_poisson'' = - 4pi * r * density(r)
     U_poisson = solve_poisson_ode(xvec,density)
-    
+    #plt.plot(xvec,U_poisson,color='red')
+    #plt.show()
     #print(U_poisson[-100]/xvec[-100])
     #print(U_pointwise_potential[-100]/xvec[-100])
     # normalization??
@@ -118,8 +121,7 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
 
     # plt.plot(xvec, Vhartree, color='blue')
     # plt.plot(xvec,density,color='red')
-    # plt.plot(xvec,U_pointwise_potential,color='black')
-    # plt.show()
+
     for t in range(len(Vhartree)):
         r = xvec[t]
         d = density[t] 
@@ -144,24 +146,20 @@ if __name__ == "__main__":
     """
 
     Ngrid = 2000
-    rmin = 0.00001
-    rmax = 20.0
+    rmax = 40.0
+    rmin = 1e-10
     (xvec, grid_dr) = np.linspace(rmin, rmax, Ngrid,retstep=True)
     numelectrons=1
-    R=10
+    R=rmax
+
     #true_computed_density = check_poisson(xvec,grid_dr)
-    
     # g = gaussian_density(xvec)
     # x = -4*np.pi *xvec*g
     # plt.plot(xvec,x,color='blue',label="ground truth-4pi*x *p(x)")
-
     # U_potential = solve_poisson_ode(xvec,g)
     # computed_density = check_potential(U_potential,xvec,grid_dr)
     # plt.plot(xvec[3:-5],computed_density[3:-5],color='red',label="solved d2U/d2r")
-    
-    # plt.legend()
-    # plt.show()
-
+        
     density_1s = np.exp(-2*xvec)/np.pi
     U_potential_1s = solve_poisson_ode(xvec,density_1s)
     U_pointwise_potential = xvec*numelectrons/rmax
@@ -169,8 +167,9 @@ if __name__ == "__main__":
     V_potential_1s = U_final/xvec
     xvec=xvec
     density_1s = density_1s
-    
+    plt.plot(xvec,U_potential_1s,color='blue')
+    plt.show()
     E_1s = 4*np.pi * integrate.simps(xvec**2 * density_1s * V_potential_1s,xvec)
-    print(E_1s)
+    print("the Hartree energy for 1s Hydrodgen is (should be 0.625):",E_1s)
     
 
