@@ -10,6 +10,7 @@ class Radial_Grid:
         self.r_gridsize = r_gridsize
         (self.gridvec, self.grid_dr) = np.linspace(self.rmin, self.rmax, self.r_gridsize \
                 ,endpoint=False,retstep=True)
+        self.gridvec = self.gridvec[::-1]
         
 
 class  Cartesian_1d:

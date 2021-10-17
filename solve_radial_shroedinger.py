@@ -1,6 +1,8 @@
 """ 
 create simple Hydrogen Radial Hamiltonian and find probability densities and energies
 without any angular elemnts (l=0).
+https://physicspython.wordpress.com/tag/schroedinger-equation/
+
 """
 
 
@@ -27,10 +29,6 @@ eps_0 = 1/ (4* np.pi)
 a0 = (4*np.pi * eps_0 * hbar**2)/(m_e * e**2)
 print("a0 = {0}".format(a0))
 
-# grid constants:
-R_gridsize = 1000
-Rmin = 20
-Rmax = 1e-05
 
 """
 phy_gridsize = 200
@@ -129,8 +127,17 @@ def get_true_ground_state(Rvec):
     psi_1s = 1/(np.sqrt(np.pi)) * np.power(1/a0,1.5) * np.exp(-Rvec/a0) 
     return psi_1s
 
+
+# grid constants:
+R_gridsize = 1000
+Rmin = 1e-05
+Rmax = 20
+
+
 if __name__ == "__main__":
-    (Rvec, grid_dr) = np.linspace(Rmin, Rmax, R_gridsize,endpoint=False,retstep=True)
+    (Rvec, grid_dr) = np.linspace(Rmax,Rmin , R_gridsize,endpoint=False,retstep=True)
+    Rvec = Rvec[::-1]
+    print(Rvec)
     #(phy_vec, d_phy) = np.linspace(phy_min, phy_max, phy_gridsize,retstep=True)
     #(theta_vec, d_theta)= np.linspace(theta_min, theta_max, theta_gridsize,retstep=True)
     #theta_vec, phy_vec = np.meshgrid(theta_vec, phy_vec)
