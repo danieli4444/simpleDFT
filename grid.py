@@ -8,18 +8,7 @@ class Radial_Grid:
         self.rmin = rmin
         self.rmax = rmax
         self.r_gridsize = r_gridsize
-        (self.gridvec, self.grid_dr) = np.linspace(self.rmin, self.rmax, self.r_gridsize \
+        (self.gridvec, self.grid_dr) = np.linspace(self.rmax, self.rmin, self.r_gridsize \
                 ,endpoint=False,retstep=True)
         self.gridvec = self.gridvec[::-1]
         
-
-class  Cartesian_1d:
-    def __init__(self, x_gridsize , xmin ,xmax) -> None:
-        self.grid_type = GRID_TYPES[1]
-        self.xmin = xmin
-        self.xmax = xmax
-        self.x_gridsize = x_gridsize
-        (self.gridvec, self.grid_dr) = np.linspace(self.xmin, self.xmax, self.x_gridsize \
-                ,endpoint=False,retstep=True)
-
-       

@@ -4,7 +4,7 @@ from scipy import integrate
 
 #ToDo: check if dX is needed in the energy calc here??
 def calculate_exchange(density,xvec,grid_dr):
-    x_energy_const = -(3/4)*np.power((3/np.pi),1/3)
+    x_energy_const = (3/4)*np.power((3/np.pi),1/3)
     x_potential_const = -np.power((3/np.pi),1/3)
    
     x_energy = x_energy_const * 4*np.pi * integrate.simps(np.power(density,4/3)*xvec**2,xvec)

@@ -1,6 +1,6 @@
 import numpy as np
-import scipy
 from scipy.integrate.odepack import odeint
+from scipy.optimize.zeros import _compute_divided_differences
 from physical_units import m_e, eps_0, e, hbar
 from scipy import integrate
 import matplotlib.pyplot as plt
@@ -101,38 +101,27 @@ def calculate_hartree_pot(density, xvec, grid_dr, numelectrons, eps=1e-12):
 
     # U_poisson'' = - 4pi * r * density(r)
     U_poisson = solve_poisson_ode(xvec,density)
-    #plt.plot(xvec,U_poisson,color='red')
-    #plt.show()
+
     #print(U_poisson[-100]/xvec[-100])
     #print(U_pointwise_potential[-100]/xvec[-100])
     # normalization??
-    #norm = integrate.simps(U_poisson**2,x=xvec)
-    #U_poisson *= 1/np.sqrt(abs(norm))
+    # norm = 4*np.pi *integrate.simps(xvec**2 * U_poisson**2,x=xvec)
+    # U_poisson *= 1/np.sqrt(abs(norm))
 
     U_final = U_poisson +  U_pointwise_potential - (xvec/R) * U_poisson
 
-    print("U_poisson = {0} , U_pointwise = {1}".format(U_poisson.max(), U_pointwise_potential.max()))
     Vhartree = U_final/xvec
+    Ehartree2 = Ha_energy_constant * 4*np.pi * integrate.simps(Vhartree* density * xvec**2 ,xvec)
+    # for t in range(len(Vhartree)):
+    #     r = xvec[t]
+    #     d = density[t] 
+    #     Ehartree = 0
+    #     Ehartree += Vhartree[t] * d * r**2 * grid_dr
+    # Ehartree *= Ha_energy_constant 
+    # Ehartree = Ha_energy_constant * 4*np.pi (Vhartree*density*xvec**2,xvec)
+    # print("Ehartree = {0} ".format(Ehartree))
 
-    # get rid of the numeric artifacts
-    for i in range(0,5):
-        Vhartree[i] = 0
-        Vhartree[-i] = 0
-
-    # plt.plot(xvec, Vhartree, color='blue')
-    # plt.plot(xvec,density,color='red')
-
-    for t in range(len(Vhartree)):
-        r = xvec[t]
-        d = density[t] 
-        Ehartree = 0
-        Ehartree += Vhartree[t] * d * r**2 * grid_dr
-    
-    Ehartree *= Ha_energy_constant 
-    Ehartree2 = integrate.simps(Vhartree* density * xvec**2 ,xvec)
-    #Ehartree = Ha_energy_constant * 4*np.pi (Vhartree*density*xvec**2,xvec)
     print("solved Vhartree using poisson!")
-    print("Ehartree = {0} ".format(Ehartree))
     print("Ehartree with scipy.simps integration = {0}".format(Ehartree2))
 
     return float(Ehartree2) , np.asarray(np.mat(np.diag(Vhartree, 0)))
@@ -147,8 +136,9 @@ if __name__ == "__main__":
 
     Ngrid = 2000
     rmax = 40.0
-    rmin = 1e-10
-    (xvec, grid_dr) = np.linspace(rmin, rmax, Ngrid,retstep=True)
+    rmin = 1e-5
+    (xvec, grid_dr) = np.linspace(rmax, rmin, Ngrid,endpoint=False,retstep=True)
+    xvec = xvec[::-1]
     numelectrons=1
     R=rmax
 
@@ -160,16 +150,23 @@ if __name__ == "__main__":
     # computed_density = check_potential(U_potential,xvec,grid_dr)
     # plt.plot(xvec[3:-5],computed_density[3:-5],color='red',label="solved d2U/d2r")
         
-    density_1s = np.exp(-2*xvec)/np.pi
+    density_1s =  np.exp(-xvec)/(8*np.pi)
     U_potential_1s = solve_poisson_ode(xvec,density_1s)
+    
     U_pointwise_potential = xvec*numelectrons/rmax
     U_final = U_potential_1s +  U_pointwise_potential - (xvec/rmax) * U_potential_1s
     V_potential_1s = U_final/xvec
-    xvec=xvec
     density_1s = density_1s
-    plt.plot(xvec,U_potential_1s,color='blue')
-    plt.show()
+    plt.plot(xvec,density_1s,color='blue')
     E_1s = 4*np.pi * integrate.simps(xvec**2 * density_1s * V_potential_1s,xvec)
+    density_1s_integral = 4*np.pi * integrate.simps(xvec**2 *density_1s ,xvec)
+    print("the density sums to :",density_1s_integral)
+    x = -4*np.pi *xvec*density_1s
+    computed_density = check_potential(U_final,xvec,grid_dr)
+    # plt.plot(xvec[1:-2],x[1:-2],color='blue',label="ground truth-4pi*x *p(x)")
+    # plt.plot(xvec[1:-2],computed_density[1:-2],color='red',label="solved d2U/d2r")
+
+    plt.show()
     print("the Hartree energy for 1s Hydrodgen is (should be 0.625):",E_1s)
     
 

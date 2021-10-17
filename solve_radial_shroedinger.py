@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from numpy.core.function_base import linspace
 from numpy.linalg import eigvals
 from scipy import constants as const
+from scipy import integrate
 
 # phisical constants
 omega = 2*np.pi
@@ -27,7 +28,6 @@ eps_0 = 1/ (4* np.pi)
 
 
 a0 = (4*np.pi * eps_0 * hbar**2)/(m_e * e**2)
-print("a0 = {0}".format(a0))
 
 
 """
@@ -129,15 +129,14 @@ def get_true_ground_state(Rvec):
 
 
 # grid constants:
-R_gridsize = 1000
+R_gridsize = 2000
 Rmin = 1e-05
-Rmax = 20
+Rmax = 40
 
 
 if __name__ == "__main__":
-    (Rvec, grid_dr) = np.linspace(Rmax,Rmin , R_gridsize,endpoint=False,retstep=True)
+    (Rvec, grid_dr) = np.linspace(Rmax, Rmin, R_gridsize,endpoint=False,retstep=True)
     Rvec = Rvec[::-1]
-    print(Rvec)
     #(phy_vec, d_phy) = np.linspace(phy_min, phy_max, phy_gridsize,retstep=True)
     #(theta_vec, d_theta)= np.linspace(theta_min, theta_max, theta_gridsize,retstep=True)
     #theta_vec, phy_vec = np.meshgrid(theta_vec, phy_vec)
@@ -151,16 +150,26 @@ if __name__ == "__main__":
 
     H = -kinetic_term + angular_term - potential_term 
     (Eigen_Vals,Eigen_Vecs) = diagonalize_hamiltonian(H)
+    for i in range(len(Eigen_Vals)):
+                norm_factor = 4*np.pi *integrate.simps(Eigen_Vecs[:,i]**2 *Rvec**2,Rvec)
+                Eigen_Vecs[:,i] /= np.sqrt(norm_factor)
 
     """ compute probability density for each eigenvector """
     R_functions = Eigen_Vecs
-    densities = [np.absolute(R_functions[:, i])**2 for i in range(len(Eigen_Vecs))]
+    densities = [np.absolute(R_functions[:, i])**2 for i in range(len(Eigen_Vals))]
     analytic_ground_state = get_true_ground_state(Rvec)
     true_density = 4*np.pi *(np.absolute(analytic_ground_state*Rvec))**2 *np.abs(grid_dr)
     densities[2] = true_density
 
-    x = np.sum(true_density)
-    print("density sums to ",np.sum(x))
+    from scipy import integrate
+    dens = analytic_ground_state**2
+    #densities[2] = dens
+
+    x = 4*np.pi * integrate.simps(densities[0]*Rvec**2,Rvec)
+    print("the density sums to ",x)
+    y = 4*np.pi * integrate.simps(dens*Rvec**2,Rvec)
+    print("the density sums to ",y)
+
     plot_densities(Rvec, densities, Eigen_Vals)
     #plt.plot(Rvec*1e10,Eigen_Vecs[0]**2)
     #plt.show()

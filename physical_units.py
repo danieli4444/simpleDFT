@@ -5,8 +5,8 @@ units = "AU"
 
 # config grid dimensions
 if units == "AU":
-    rmin = 40
-    rmax = 1e-10
+    rmin = 1e-05
+    rmax = 40
 else:
     rmin = 1e-09
     rmax = 1e-15
